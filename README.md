@@ -1,5 +1,5 @@
 Open TERMINAL <br />
-Install ReactJS and Tailwind CSS in cosproject <br />
+Install ReactJS + Vite and Tailwind CSS in cosproject <br />
 Install ExpressJS with NextJS in cosbackend <br />
 Make sure to login and give access to VSCode and Github  <br />
 ###
