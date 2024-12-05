@@ -1,10 +1,10 @@
 Open command line interface <br />
 Make sure to login and give access to VSCode and Github
 ###
-> git --global config user.name "<add>"
+> git --global config user.name "add your user"
 ###
 ###
-> git --global config user.email "<add>"
+> git --global config user.email "add your email"
 ###
 ###
 > cd <source_folder>
