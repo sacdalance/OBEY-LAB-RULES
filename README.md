@@ -1,5 +1,7 @@
-Open command line interface <br />
-Make sure to login and give access to VSCode and Github
+Open TERMINAL <br />
+Install ReactJS and Tailwind CSS in cosproject <br />
+Install ExpressJS with NextJS in cosbackend <br />
+Make sure to login and give access to VSCode and Github  <br />
 ###
 > git --global config user.name "add your user"
 ###
