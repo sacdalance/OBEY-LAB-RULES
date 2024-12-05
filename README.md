@@ -1,4 +1,4 @@
-Open command line interface \n
+Open command line interface <br />
 Make sure to login and give access to VSCode and Github
 ###
 > git --global config user.name "<add>"
