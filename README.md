@@ -1,4 +1,4 @@
-Open command line interface
+Open command line interface \n
 Make sure to login and give access to VSCode and Github
 ###
 > git --global config user.name "<add>"
@@ -12,6 +12,7 @@ Make sure to login and give access to VSCode and Github
 ###
 > git clone https://github.com/sacdalance/OBEY-LAB-RULES
 ###
+To check files if already cloned.
 ###
 > ls -l
 ###
