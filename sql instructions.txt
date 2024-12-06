@@ -1,0 +1,49 @@
+CREATE TABLE instructors (
+    instID VARCHAR(20) NOT NULL PRIMARY KEY,      -- Unique identifier
+    instFirstName VARCHAR(50) NOT NULL,          -- First Name
+    instMiddleName VARCHAR(50),                  -- Middle Name (optional)
+    instLastName VARCHAR(50) NOT NULL,           -- Last Name
+    instPosition VARCHAR(100),                   -- Position (e.g., Professor, Lecturer)
+    instCollege VARCHAR(100),                    -- College Name
+    instCampus VARCHAR(100),                     -- Campus Name
+    instEmail VARCHAR(100) UNIQUE,               -- Email Address (unique constraint)
+    instHRIS VARCHAR(50)                         -- HRIS Number or Code
+);
+
+INSERT INTO instructors (
+    instID, 
+    instFirstName, 
+    instMiddleName, 
+    instLastName, 
+    instPosition, 
+    instCollege, 
+    instCampus, 
+    instEmail, 
+    instHRIS
+) 
+VALUES (
+    '12345',          -- instID
+    'John',           -- instFirstName
+    'A.',             -- instMiddleName
+    'Doe',            -- instLastName
+    'Professor II',      -- instPosition
+    'Computer Science',    -- instCollege
+    'Baguio',    -- instCampus
+    'john.doe@example.com', -- instEmail
+    '56789'         -- instHRIS
+)
+
+
+CREATE TABLE certificates (
+    certID INT AUTO_INCREMENT PRIMARY KEY,         -- Unique identifier
+    dateSubmitted DATE NOT NULL,                   -- Submission date
+    timeSubmitted TIME NOT NULL,                   -- Submission time
+    serviceStartDate DATE NOT NULL,                -- Service start date
+    serviceEndDate DATE NOT NULL,                  -- Service end date
+    serviceRemarks VARCHAR(500) DEFAULT 'No remarks', -- Max length 500 characters
+    instID VARCHAR(20) NOT NULL,                   -- Foreign key referencing instructors (data type matches instructors table)
+    
+    CONSTRAINT fkInstructor FOREIGN KEY (instID) REFERENCES instructors(instID) 
+        ON DELETE CASCADE                          -- Automatically delete certificate if instructor is deleted
+        ON UPDATE CASCADE                          -- Automatically update certificate if instructor's ID changes
+);
