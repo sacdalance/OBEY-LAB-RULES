@@ -34,7 +34,11 @@ app.post('/login', (req, res) => {
         return res.status(400).json({ message: 'Email and Password are required.' });
     }
     
-    const sql = "SELECT * FROM instructors WHERE instEmail = ? AND intPassword = ?";
+    const sql = `
+            SELECT instID, instFirstName, instMiddleName, instLastName, instPosition, instCollege, instCampus, instEmail, instHRIS
+                FROM instructors 
+                WHERE instEmail = ? AND intPassword = ?
+    `;
     db.query(sql, [email, password], (err, data) => {
         if (err) {
             return res.status(500).json({ message: 'Database error' });
@@ -46,6 +50,7 @@ app.post('/login', (req, res) => {
             return res.json({ success: false, message: "Login Failed" });
         }
     });
+
 });
 
 
