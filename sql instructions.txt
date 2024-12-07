@@ -1,6 +1,6 @@
 -- Create the instructors table
 CREATE TABLE instructors (
-    instID INT NOT NULL PRIMARY KEY,      	 -- Unique identifier
+    instID INT NOT NULL PRIMARY KEY,      	     -- Unique identifier
     instFirstName VARCHAR(50) NOT NULL,          -- First Name
     instMiddleName VARCHAR(50),                  -- Middle Name (optional)
     instLastName VARCHAR(50) NOT NULL,           -- Last Name
@@ -8,7 +8,7 @@ CREATE TABLE instructors (
     instCollege VARCHAR(100),                    -- College Name
     instCampus VARCHAR(100),                     -- Campus Name
     instEmail VARCHAR(100) UNIQUE,               -- Email Address (unique constraint)
-    instPassword VARCHAR(255) NOT NULL		 -- Password 
+    instPassword VARCHAR(255) NOT NULL		     -- Password 
     instHRIS VARCHAR(50)                         -- HRIS Number or Code
 );
 
@@ -25,15 +25,15 @@ INSERT INTO instructors (
     instHRIS
 ) 
 VALUES (
-    '12345',          -- instID
-    'John',           -- instFirstName
-    'A.',             -- instMiddleName
-    'Doe',            -- instLastName
-    'Professor II',      -- instPosition
-    'Computer Science',    -- instCollege
-    'Baguio',    -- instCampus
-    'john.doe@example.com', -- instEmail
-    '56789'         -- instHRIS
+    '12345',                                      -- instID
+    'John',                                       -- instFirstName
+    'A.',                                         -- instMiddleName
+    'Doe',                                        -- instLastName
+    'Professor II',                               -- instPosition
+    'Computer Science',                           -- instCollege
+    'Baguio',                                     -- instCampus
+    'john.doe@example.com',                       -- instEmail
+    '56789'                                       -- instHRIS
 )
 
 -- Create the certificates table
