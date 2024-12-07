@@ -1,6 +1,6 @@
-Open "TERMINAL" <br />
+Open <b>TERMINAL</b> <br />
 
-Install ExpressJS/NodeJS in "cosbackend" <br />
+Install ExpressJS/NodeJS in <b>cosbackend</b> <br />
 NodeJS link: https://www.youtube.com/watch?v=Q3ixb1w-QaY <br />
 ###
 > cd cosbackend
@@ -9,7 +9,7 @@ NodeJS link: https://www.youtube.com/watch?v=Q3ixb1w-QaY <br />
 > npm install express mysql cors nodemon
 ###
 
-Install ReactJS + Vite and Tailwind CSS in "cosproject" <br />
+Install ReactJS + Vite and Tailwind CSS in <b>cosproject</b> <br />
 ReactJS link: https://www.youtube.com/watch?v=agpZsCUllqc <br />
 ###
 > cd cosproject
