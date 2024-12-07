@@ -1,6 +1,6 @@
-Open <b>TERMINAL</b> <br /><br />
+1. Open <b>TERMINAL</b> <br /><br />
 
-Install ExpressJS/NodeJS in <b>cosbackend</b> <br />
+2. Install ExpressJS/NodeJS in <b>cosbackend</b> <br />
 NodeJS link: https://www.youtube.com/watch?v=Q3ixb1w-QaY <br />
 ###
 > cd cosbackend
@@ -28,7 +28,7 @@ Tailwind CSS https://www.youtube.com/watch?v=1WdL1TLfkYo
 ###
 <br /> <br />
 
-Make sure to login and give access to VSCode and Github  <br />
+3. Make sure to login and give access to VSCode and Github  <br />
 ###
 > git --global config user.name "add your user"
 ###
@@ -41,7 +41,7 @@ Make sure to login and give access to VSCode and Github  <br />
 ###
 > git clone https://github.com/sacdalance/OBEY-LAB-RULES
 ###
-To check files if already cloned.
+4. To check files if already cloned.
 ###
 > ls -l
 ###
@@ -49,7 +49,8 @@ To check files if already cloned.
 > git remote add origin https://github.com/sacdalance/OBEY-LAB-RULES
 ###
  <br />  <br />
-Commands to see progress: <br />  <br />
+5. Set mySQL using XAMPP Control Panel and query the content of "sql instructions.txt"  <br />  <br />
+6. Commands to see progress: <br />  <br />
 <b> Backend </b> <br />
 ###
 > cd cosbackend
@@ -68,3 +69,4 @@ Commands to see progress: <br />  <br />
 ###
 > Ctrl + C to END
 > ###
+
