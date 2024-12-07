@@ -19,35 +19,16 @@ function Header() {
     }
 
     return (
-        <header style={styles.header}>
-            <h1 style={styles.title}>Certificate of Service</h1>
-            <button onClick={handleLogout} style={styles.logoutButton}>
+        <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
+            <h1 className="m-0 text-xl">Certificate of Service</h1>
+            <button 
+                onClick={handleLogout} 
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-400 focus:outline-none"
+            >
                 Logout
             </button>
         </header>
     );
 }
-
-const styles = {
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '10px 20px',
-        backgroundColor: '#333',
-        color: '#fff',
-    },
-    title: {
-        margin: 0,
-    },
-    logoutButton: {
-        backgroundColor: '#ff4d4d',
-        color: '#fff',
-        border: 'none',
-        padding: '8px 12px',
-        borderRadius: '4px',
-        cursor: 'pointer',
-    },
-};
 
 export default Header;
