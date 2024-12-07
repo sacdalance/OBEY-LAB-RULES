@@ -23,6 +23,33 @@ db.connect((err) => {
     console.log("Connected to the database.");
 });
 
+app.post('/login', (req, res) => {
+    console.log('Login attempt:', req.body);
+    
+    // Ensure that req.body contains email and password
+    const email = req.body.email;
+    const password = req.body.password;
+    
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and Password are required.' });
+    }
+    
+    const sql = "SELECT * FROM instructors WHERE instEmail = ? AND intPassword = ?";
+    db.query(sql, [email, password], (err, data) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error' });
+        }
+        
+        if (data.length > 0) {
+            return res.json({ success: true, message: "Login Successfully" });
+        } else {
+            return res.json({ success: false, message: "Login Failed" });
+        }
+    });
+});
+
+
+
 // Get all instructors
 app.get('/instructors', (req, res) => {
     const sql = `
@@ -52,6 +79,22 @@ app.get('/certificates', (req, res) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: "Error fetching certificates" });
+        }
+        return res.json(data);
+    });
+});
+
+// Get all instructors
+app.get('/approvers', (req, res) => {
+    const sql = `
+        SELECT i.instID, i.instFirstName, i.instMiddleName, i.instLastName, 
+               i.instPosition, i.instCollege, i.instCampus, i.instEmail, i.instHRIS
+        FROM instructors i
+    `;
+    db.query(sql, (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error fetching instructors" });
         }
         return res.json(data);
     });

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
     const [instructors, setInstructors] = useState([]);
     const [certificates, setCertificates] = useState([]);
     const [certificate, setCertificate] = useState({
-        dateSubmitted: '',
-        timeSubmitted: '',
         serviceStartDate: '',
         serviceEndDate: '',
         serviceRemarks: '',
         instID: '',
     });
-    const [editing, setEditing] = useState(false);
-    const [editingCertID, setEditingCertID] = useState(null);
+
+    const navigate = useNavigate();
 
     // Fetch all instructors
     useEffect(() => {
@@ -33,46 +32,42 @@ function Dashboard() {
     // Handle adding a certificate
     const handleAddCertificate = (e) => {
         e.preventDefault();
-        const method = editing ? 'PUT' : 'POST';
-        const url = editing
-            ? `http://localhost:8081/certificates/${editingCertID}`
-            : 'http://localhost:8081/certificates';
 
-        fetch(url, {
-            method,
+        // Get the current date and time
+        const now = new Date();
+        const todayDate = now.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        const currentTime = now.toTimeString().split(' ')[0]; // Format as HH:MM:SS
+
+        // Add current date and time to the certificate object
+        const newCertificate = {
+            ...certificate,
+            dateSubmitted: todayDate,
+            timeSubmitted: currentTime,
+        };
+
+        fetch('http://localhost:8081/certificates', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(certificate),
+            body: JSON.stringify(newCertificate),
         })
             .then((res) => {
                 if (res.ok) {
-                    alert(`Certificate ${editing ? 'updated' : 'added'} successfully!`);
+                    alert('Certificate added successfully!');
                     setCertificate({
-                        dateSubmitted: '',
-                        timeSubmitted: '',
                         serviceStartDate: '',
                         serviceEndDate: '',
                         serviceRemarks: '',
                         instID: '',
                     });
-                    setEditing(false);
-                    setEditingCertID(null);
                     return res.json();
                 } else {
-                    alert(`Failed to ${editing ? 'update' : 'add'} certificate`);
+                    alert('Failed to add certificate');
                 }
             })
-            .then((updatedCert) => {
-                if (editing) {
-                    setCertificates((prev) =>
-                        prev.map((cert) =>
-                            cert.certID === editingCertID ? updatedCert : cert
-                        )
-                    );
-                } else {
-                    setCertificates((prev) => [...prev, updatedCert]);
-                }
+            .then((newCert) => {
+                setCertificates((prev) => [...prev, newCert]);
             })
             .catch((err) => console.error(err));
     };
@@ -97,48 +92,18 @@ function Dashboard() {
             .catch((err) => console.error(err));
     };
 
-    // Handle editing a certificate
-    const handleModifyCertificate = (cert) => {
-        setEditing(true);
-        setEditingCertID(cert.certID);
-        setCertificate({
-            dateSubmitted: cert.dateSubmitted,
-            timeSubmitted: cert.timeSubmitted,
-            serviceStartDate: cert.serviceStartDate,
-            serviceEndDate: cert.serviceEndDate,
-            serviceRemarks: cert.serviceRemarks,
-            instID: cert.instID,
-        });
+    // Redirect to the Modify page
+    const handleNavigateToModify = (certID) => {
+        navigate(`/modify/${certID}`);
     };
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl mb-4">Certificate of Service</h1>
 
-            {/* Add/Modify Certificate Form */}
+            {/* Add Certificate Form */}
             <div className="mb-8">
-                <h2 className="text-xl mb-4">{editing ? 'Edit Certificate' : 'Add Certificate'}</h2>
+                <h2 className="text-xl mb-4">Add Certificate</h2>
                 <form onSubmit={handleAddCertificate}>
-                    <input
-                        type="date"
-                        placeholder="Date Submitted"
-                        value={certificate.dateSubmitted}
-                        onChange={(e) =>
-                            setCertificate((prev) => ({ ...prev, dateSubmitted: e.target.value }))
-                        }
-                        className="border p-2 rounded mr-2"
-                        required
-                    />
-                    <input
-                        type="time"
-                        placeholder="Time Submitted"
-                        value={certificate.timeSubmitted}
-                        onChange={(e) =>
-                            setCertificate((prev) => ({ ...prev, timeSubmitted: e.target.value }))
-                        }
-                        className="border p-2 rounded mr-2"
-                        required
-                    />
                     <input
                         type="date"
                         placeholder="Service Start Date"
@@ -192,7 +157,7 @@ function Dashboard() {
                         ))}
                     </select>
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        {editing ? 'Update Certificate' : 'Add Certificate'}
+                        Add Certificate
                     </button>
                 </form>
             </div>
@@ -224,7 +189,7 @@ function Dashboard() {
                             <td className="border border-gray-400 px-4 py-2">{cert.serviceRemarks}</td>
                             <td className="border border-gray-400 px-4 py-2">
                                 <button
-                                    onClick={() => handleModifyCertificate(cert)}
+                                    onClick={() => handleNavigateToModify(cert.certID)}
                                     className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
                                 >
                                     Modify

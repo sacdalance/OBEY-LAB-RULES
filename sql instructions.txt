@@ -1,5 +1,5 @@
 CREATE TABLE instructors (
-    instID VARCHAR(20) NOT NULL PRIMARY KEY,      -- Unique identifier
+    instID INT NOT NULL PRIMARY KEY,      	 -- Unique identifier
     instFirstName VARCHAR(50) NOT NULL,          -- First Name
     instMiddleName VARCHAR(50),                  -- Middle Name (optional)
     instLastName VARCHAR(50) NOT NULL,           -- Last Name
@@ -7,6 +7,7 @@ CREATE TABLE instructors (
     instCollege VARCHAR(100),                    -- College Name
     instCampus VARCHAR(100),                     -- Campus Name
     instEmail VARCHAR(100) UNIQUE,               -- Email Address (unique constraint)
+    instPassword VARCHAR(255) NOT NULL		 -- Password 
     instHRIS VARCHAR(50)                         -- HRIS Number or Code
 );
 
@@ -46,4 +47,29 @@ CREATE TABLE certificates (
     CONSTRAINT fkInstructor FOREIGN KEY (instID) REFERENCES instructors(instID) 
         ON DELETE CASCADE                          -- Automatically delete certificate if instructor is deleted
         ON UPDATE CASCADE                          -- Automatically update certificate if instructor's ID changes
+);
+
+-- Create the nonteach table
+CREATE TABLE non_teaching_activities (
+    actID INT AUTO_INCREMENT PRIMARY KEY,         -- Unique identifier for the activity
+    actTitle VARCHAR(255) NOT NULL,               -- Title of the activity
+    actHours INT NOT NULL,                        -- Number of hours for the activity
+    certID INT NOT NULL,                          -- Foreign key referencing certificates table
+    
+    CONSTRAINT fkCertificateActivity FOREIGN KEY (certID) REFERENCES certificates(certID) 
+        ON DELETE CASCADE                         -- Automatically delete activity if certificate is deleted
+        ON UPDATE CASCADE                         -- Automatically update activity if certificate ID changes
+);
+
+-- Create the approvers table
+CREATE TABLE approvers (
+    apprID INT AUTO_INCREMENT PRIMARY KEY,        -- Unique identifier for the approver action
+    apprDate DATE NOT NULL,                       -- Date of approval action
+    apprTime TIME NOT NULL,                       -- Time of approval action
+    apprAction VARCHAR(50) NOT NULL,              -- Action taken (e.g., "Approved", "Rejected")
+    certID INT NOT NULL,                          -- Foreign key referencing certificates table
+    
+    CONSTRAINT fkCertificateApprover FOREIGN KEY (certID) REFERENCES certificates(certID) 
+        ON DELETE CASCADE                         -- Automatically delete approver record if certificate is deleted
+        ON UPDATE CASCADE                         -- Automatically update approver record if certificate ID changes
 );
