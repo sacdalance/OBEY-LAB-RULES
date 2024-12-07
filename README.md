@@ -1,4 +1,4 @@
-Open <b>TERMINAL</b> <br />
+Open <b>TERMINAL</b> <br /><br />
 
 Install ExpressJS/NodeJS in <b>cosbackend</b> <br />
 NodeJS link: https://www.youtube.com/watch?v=Q3ixb1w-QaY <br />
