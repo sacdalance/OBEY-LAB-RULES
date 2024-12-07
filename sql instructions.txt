@@ -1,3 +1,4 @@
+-- Create the instructors table
 CREATE TABLE instructors (
     instID INT NOT NULL PRIMARY KEY,      	 -- Unique identifier
     instFirstName VARCHAR(50) NOT NULL,          -- First Name
@@ -11,6 +12,7 @@ CREATE TABLE instructors (
     instHRIS VARCHAR(50)                         -- HRIS Number or Code
 );
 
+-- example
 INSERT INTO instructors (
     instID, 
     instFirstName, 
@@ -34,7 +36,7 @@ VALUES (
     '56789'         -- instHRIS
 )
 
-
+-- Create the certificates table
 CREATE TABLE certificates (
     certID INT AUTO_INCREMENT PRIMARY KEY,         -- Unique identifier
     dateSubmitted DATE NOT NULL,                   -- Submission date
