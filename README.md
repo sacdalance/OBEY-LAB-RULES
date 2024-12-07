@@ -1,6 +1,32 @@
-Open TERMINAL <br />
-Install ReactJS + Vite and Tailwind CSS in cosproject <br />
-Install ExpressJS with NextJS in cosbackend <br />
+Open "TERMINAL" <br />
+
+Install ExpressJS/NodeJS in "cosbackend" <br />
+NodeJS link: https://www.youtube.com/watch?v=Q3ixb1w-QaY <br />
+###
+> cd cosbackend
+###
+###
+> npm install express mysql cors nodemon
+###
+
+Install ReactJS + Vite and Tailwind CSS in "cosproject" <br />
+ReactJS link: https://www.youtube.com/watch?v=agpZsCUllqc <br />
+###
+> cd cosproject
+###
+###
+> npm create vite@latest	
+###
+Then, select React and JavaScript <br />
+
+Tailwind CSS https://www.youtube.com/watch?v=1WdL1TLfkYo
+###
+> cd cosproject
+###
+###
+> npm install -D tailwindcss postcss autoprefixer
+###
+
 Make sure to login and give access to VSCode and Github  <br />
 ###
 > git --global config user.name "add your user"
