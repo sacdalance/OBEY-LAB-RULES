@@ -26,7 +26,7 @@ Tailwind CSS https://www.youtube.com/watch?v=1WdL1TLfkYo
 ###
 > npm install -D tailwindcss postcss autoprefixer
 ###
-<br /><br />
+<br /> <br />
 
 Make sure to login and give access to VSCode and Github  <br />
 ###
@@ -48,7 +48,7 @@ To check files if already cloned.
 ###
 > git remote add origin https://github.com/sacdalance/OBEY-LAB-RULES
 ###
-
+ <br />  <br />
 Commands to see progress: <br />  <br />
 <b> Backend </b> <br />
 ###
