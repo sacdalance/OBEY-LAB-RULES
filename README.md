@@ -48,3 +48,18 @@ To check files if already cloned.
 ###
 > git remote add origin https://github.com/sacdalance/OBEY-LAB-RULES
 ###
+
+Commands to see progress: <br />
+<b> Backend </b> <br />
+###
+> cd cosbackend
+###
+###
+> npm start
+<br /> <br />
+<b> Frontend </b>
+###
+> cd cosproject
+###
+###
+> npm run dev
