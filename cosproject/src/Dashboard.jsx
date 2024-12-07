@@ -200,6 +200,12 @@ function Dashboard() {
                                 >
                                     Delete
                                 </button>
+                                <button
+                                    onClick={() => handleDeleteCertificate(cert.certID)}
+                                    className="bg-red-500 text-white px-2 py-1 rounded"
+                                >
+                                    Print 
+                                </button>
                             </td>
                         </tr>
                     ))}

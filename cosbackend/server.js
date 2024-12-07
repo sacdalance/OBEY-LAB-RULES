@@ -37,7 +37,7 @@ app.post('/login', (req, res) => {
     const sql = `
             SELECT instID, instFirstName, instMiddleName, instLastName, instPosition, instCollege, instCampus, instEmail, instHRIS
                 FROM instructors 
-                WHERE instEmail = ? AND intPassword = ?
+                WHERE instEmail = ? AND instPassword = ?
     `;
     db.query(sql, [email, password], (err, data) => {
         if (err) {
