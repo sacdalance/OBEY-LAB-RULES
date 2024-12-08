@@ -87,7 +87,7 @@ function Dashboard() {
                             serviceRemarks: '',
                             actTitle: '',
                             actHours: '',
-                        },
+                        },  
                     }));
                     return res.json();
                 } else {
@@ -250,8 +250,9 @@ function Dashboard() {
 
             {/* Add Certificate Form */}
             <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-                <h2 className="text-xl font-bold mb-4">Add Certificate</h2>
+                <h2 className="text-xl font-bold mb-4">ADD CERTIFICATE</h2>
                 <form onSubmit={handleAddCertificate} className="grid gap-4">
+                    <p>Service Start Date</p>
                     <input
                         type="date"
                         name="serviceStartDate"
@@ -261,6 +262,7 @@ function Dashboard() {
                         className="border p-2 rounded"
                         required
                     />
+                    <p>Service End Date</p>
                     <input
                         type="date"
                         name="serviceEndDate"
@@ -270,14 +272,15 @@ function Dashboard() {
                         className="border p-2 rounded"
                         required
                     />
+                    <p>Except Date</p>
                     <textarea
-                        name="serviceRemarks"
-                        placeholder="Remarks"
+                        name="serviceExceptDate"
+                        placeholder="Remarks: e.g. January 5, 2024 to January 8, 2024"
                         value={certificateState.certificate.serviceRemarks}
                         onChange={handleFormChange}
                         className="border p-2 rounded w-full"
-                        rows="3"
                     />
+                    <p>Non-teaching Activity</p>
                     <input
                         type="text"
                         name="actTitle"
@@ -287,8 +290,10 @@ function Dashboard() {
                         className="border p-2 rounded w-full"
                         required
                     />
+                    <p>Non-teaching Activity Hours</p>
                     <input
                         type="number"
+                        min="0"
                         name="actHours"
                         placeholder="Activity Hours"
                         value={certificateState.certificate.actHours}
@@ -297,19 +302,20 @@ function Dashboard() {
                         required
                     />
                     <button className="bg-red-900 text-white px-4 py-2 rounded">
-                        Add Certificate
+                        ADD CERTIFICATE
                     </button>
                 </form>
             </div>
 
             {/* Certificates Table */}
             <div className="bg-white shadow-md rounded-lg p-6">
-                <h2 className="text-xl font-bold mb-4">Certificates</h2>
+                <h2 className="text-xl font-bold mb-4">CERTIFICATES</h2>
                 <table className="w-full border-collapse border border-gray-300">
                     <thead>
                         <tr className="bg-gray-200 text-left">
                             <th className="border border-gray-300 px-4 py-2">Certificate ID</th>
                             <th className="border border-gray-300 px-4 py-2">Date Submitted</th>
+                            <th className="border border-gray-300 px-4 py-2">Time Submitted</th>
                             <th className="border border-gray-300 px-4 py-2">Start Date</th>
                             <th className="border border-gray-300 px-4 py-2">End Date</th>
                             <th className="border border-gray-300 px-4 py-2">Remarks</th>
@@ -321,6 +327,7 @@ function Dashboard() {
                             <tr key={cert.certID} className="hover:bg-gray-100">
                                 <td className="border border-gray-300 px-4 py-2">{cert.certID}</td>
                                 <td className="border border-gray-300 px-4 py-2">{cert.dateSubmitted}</td>
+                                <td className="border border-gray-300 px-4 py-2">{cert.timeSubmitted}</td>
                                 <td className="border border-gray-300 px-4 py-2">{cert.serviceStartDate}</td>
                                 <td className="border border-gray-300 px-4 py-2">{cert.serviceEndDate}</td>
                                 <td className="border border-gray-300 px-4 py-2">{cert.serviceRemarks}</td>
@@ -329,19 +336,19 @@ function Dashboard() {
                                         onClick={() => modify(cert.certID)}
                                         className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 my-1"
                                     >
-                                        Modify
+                                        MODIFY
                                     </button>
                                     <button
                                         onClick={() => print(cert.certID)}
                                         className="bg-green-500 text-white px-2 py-1 rounded mr-2 my-1"
                                     >
-                                        Print
+                                        PRINT
                                     </button>
                                     <button
                                         onClick={() => handleDeleteCertificate(cert.certID)}
                                         className="bg-red-900 text-white px-2 py-1 rounded my-1"
                                     >
-                                        Delete
+                                        DELETE
                                     </button>
                                 </td>
                             </tr>
