@@ -23,7 +23,7 @@ function Header() {
             <h1 className="m-0 text-xl">Certificate of Service</h1>
             <button 
                 onClick={handleLogout} 
-                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-400 focus:outline-none"
+                className="bg-red-500 text-white py-2 px-4 rounded hov alias carder:bg-red-400 focus:outline-none"
             >
                 Logout
             </button>

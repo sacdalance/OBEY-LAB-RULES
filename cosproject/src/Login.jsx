@@ -28,6 +28,7 @@ function Login() {
             .then((data) => {
                 if (data.success) {
                     localStorage.setItem('isLoggedIn', 'true'); // Save login state
+                    localStorage.setItem('user', JSON.stringify(data.user)); // Store all user data
                     navigate('/dashboard'); // Redirect to dashboard
                 } else {
                     alert(data.message);
