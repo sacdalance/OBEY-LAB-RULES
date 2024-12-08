@@ -12,12 +12,12 @@ NodeJS link: https://www.youtube.com/watch?v=Q3ixb1w-QaY <br />
 Install ReactJS + Vite and Tailwind CSS in <b>cosproject</b> <br />
 ReactJS link: https://www.youtube.com/watch?v=agpZsCUllqc <br />
 ###
-> cd cosproject
+> cd OBEY-LAB-RULES
 ###
 ###
 > npm create vite@latest	
 ###
-Then, select React and JavaScript <br /><br />
+Then, name: cosproject, select React and JavaScript <br /><br />
 
 Tailwind CSS https://www.youtube.com/watch?v=1WdL1TLfkYo
 ###
