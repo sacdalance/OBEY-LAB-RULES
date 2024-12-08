@@ -6,36 +6,34 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;  /* Prevent horizontal overflow */
 }
 
 body {
-  margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  min-width: 100vw;
   min-height: 100vh;
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 5vw;  /* Font size adjusts relative to viewport width */
   line-height: 1.1;
 }
 
@@ -58,6 +56,35 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+header {
+  width: 100%;  /* Ensure the header stretches across the full width */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+header img {
+  width: auto;
+  height: 40px; /* Adjust the logo size */
+  object-fit: contain;
+}
+
+main {
+  flex-grow: 1;  /* Allows the content to grow and fill the available space */
+  width: 100%;
+  padding: 1rem;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -70,3 +97,4 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+  

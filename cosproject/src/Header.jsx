@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import logo from './assets/UP-Seal.png'; // Import the logo
 
 function Header() {
     const navigate = useNavigate();
@@ -19,11 +20,26 @@ function Header() {
     }
 
     return (
-        <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
-            <h1 className="m-0 text-xl">Certificate of Service</h1>
+        <header className="flex justify items-center p-4 bg-red-900 text-white shadow-md">
+            {/* Left: Logo */}
+            <div className="flex items-center gap-2">
+                <img 
+                    src={logo} 
+                    alt="UP Seal" 
+                    onClick={() => navigate('/dashboard')}
+                    className="w-12 h-12 object-contain" // Adjust size as needed
+                />
+            </div>
+
+            {/* Left: Title */}
+            <h1 className="text-xl ml-2 font-bold flex-grow">
+                CERTIFICATE OF SERVICE
+            </h1>
+
+            {/* Right: Logout Button */}
             <button 
                 onClick={handleLogout} 
-                className="bg-red-500 text-white py-2 px-4 rounded hov alias carder:bg-red-400 focus:outline-none"
+                className="bg-white text-red-900 py-1 px-2 rounded hover:bg-red-900 hover:text-white focus:outline-none"
             >
                 Logout
             </button>

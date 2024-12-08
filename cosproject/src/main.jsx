@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import App from './App.jsx';
 import Login from './Login';
 import Dashboard from './Dashboard';
-import Modify from './Modify';
+import Modify from './Modify'; 
 
 import './index.css';
 

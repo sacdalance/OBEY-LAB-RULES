@@ -41,25 +41,38 @@ function Login() {
     };
 
     return (
-        <div>
-            <h1>Login</h1>
-            <form onSubmit={handleLogin}>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Login</button>
-            </form>
+        <div className="min-h-screen bg-red-900 flex justify-center items-center">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+                <h1 className="text-2xl font-bold text-center text-red-900 mb-6">CERTIFICATE OF SERVICE</h1>
+                <form onSubmit={handleLogin}>
+                    <div className="mb-4">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        />
+                    </div>
+                    <div className="mb-6">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full py-3 bg-red-900 text-white font-semibold rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                        Login
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }
