@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 function Dashboard() {
     const [user, setUser] = useState(null);
     const [certificateState, setCertificateState] = useState({
-        certificates: [],
+        certificates: [], // Start as an empty array
         certificate: {
             serviceStartDate: '',
             serviceEndDate: '',
@@ -26,16 +26,18 @@ function Dashboard() {
             setUser(loggedInUser);
         }
     }, [navigate]);
-
+    
     // Fetch certificates created by the logged-in user
     useEffect(() => {
         if (user) {
+            console.log("Fetching certificates for user:", user.instID);
             fetch(`http://localhost:8081/certificates?userID=${user.instID}`)
                 .then((res) => res.json())
-                .then((data) =>
-                    setCertificateState((prev) => ({ ...prev, certificates: data }))
-                )
-                .catch((err) => console.error(err));
+                .then((data) => {
+                    console.log("Certificates fetched:", data);
+                    setCertificateState((prev) => ({ ...prev, certificates: data }));
+                })
+                .catch((err) => console.error('Error fetching certificates:', err));
         }
     }, [user]);
 
@@ -161,39 +163,79 @@ function Dashboard() {
             alert('Certificate not found.');
             return;
         }
-            // Open a new window for printing
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Certificate</title>
-                    </head>
-                    <body>
+    
+        // Open a new window for printing
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Certificate</title>
+                    <style>
+                        /* Hide everything that is not part of the printable certificate */
+                        body * {
+                            visibility: hidden;
+                        }
+                        .certificate-container, .certificate-container * {
+                            visibility: visible;
+                        }
+                        .certificate-container {
+                            padding: 20px;
+                            border: 2px solid #333;
+                            width: 80%;
+                            margin: 0 auto;
+                            text-align: center;
+                        }
+                        .certificate-container h1 {
+                            font-size: 2em;
+                            margin-bottom: 20px;
+                        }
+                        .certificate-container p {
+                            font-size: 1.2em;
+                            margin: 10px 0;
+                        }
+                        .signature {
+                            margin-top: 40px;
+                            font-size: 1.2em;
+                            text-align: center;
+                        }
+                        .signature span {
+                            display: block;
+                            margin-top: 30px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <!-- Printable certificate -->
+                    <div class="certificate-container">
                         <h1>Certificate of Completion</h1>
-                        <h2>Issued By:</h2>
-                        <p>Name: ${user.instFirstName} ${user.instLastName}</p>
-                        <p>Position: ${user.instPosition}</p>
-                        <p>College: ${user.instCollege}</p>
-                        <p>Campus: ${user.instCampus}</p>
-                        <p>Email: ${user.instEmail}</p>
-                        
-                        <h2>Certificate Details:</h2>
-                        <p>ID: ${cert.certID}</p>
-                        <p>Date Submitted: ${cert.dateSubmitted}</p>
-                        <p>Service Start Date: ${cert.serviceStartDate}</p>
-                        <p>Service End Date: ${cert.serviceEndDate}</p>
-                        <p>Activity Title: ${cert.actTitle}</p>
-                        <p>Activity Hours: ${cert.actHours}</p>
-                        <p>Remarks: ${cert.serviceRemarks}</p>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+                        <p><strong>Issued By:</strong> ${user.instFirstName} ${user.instLastName}</p>
+                        <p><strong>Position:</strong> ${user.instPosition}</p>
+                        <p><strong>College:</strong> ${user.instCollege}</p>
+                        <p><strong>Campus:</strong> ${user.instCampus}</p>
+                        <p><strong>Email:</strong> ${user.instEmail}</p>
+    
+                        <p><strong>Certificate ID:</strong> ${cert.certID}</p>
+                        <p><strong>Date Submitted:</strong> ${cert.dateSubmitted}</p>
+                        <p><strong>Service Start Date:</strong> ${cert.serviceStartDate}</p>
+                        <p><strong>Service End Date:</strong> ${cert.serviceEndDate}</p>
+                        <p><strong>Activity Title:</strong> ${cert.actTitle}</p>
+                        <p><strong>Activity Hours:</strong> ${cert.actHours}</p>
+                        <p><strong>Remarks:</strong> ${cert.serviceRemarks}</p>
+    
+                        <div class="signature">
+                            <span>Signature of Authorized Personnel</span>
+                            <span>Date: ${cert.dateSubmitted}</span>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
     };
-
     return (
         <div className="p-6">
+                
             {user && (
                 <div className="mb-8">
                     <h2 className="text-xl">Welcome, {user.instFirstName} {user.instLastName}</h2>
@@ -251,6 +293,7 @@ function Dashboard() {
                         className="border p-2 rounded w-full mb-2"
                         required
                     />
+                    
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">
                         Add Certificate
                     </button>

@@ -71,23 +71,36 @@ app.get('/instructors', (req, res) => {
     });
 });
 
-// Get all certificates with instructors
+// Get certificates created by a specific instructor with nonteach details
 app.get('/certificates', (req, res) => {
+    const userID = req.query.userID;
+
+    if (!userID) {
+        return res.status(400).json({ error: "User ID is required" });
+    }
+
     const sql = `
-        SELECT c.certID, c.dateSubmitted, c.timeSubmitted, c.serviceStartDate, 
-               c.serviceEndDate, c.serviceRemarks, i.instID, i.instFirstName, 
-               i.instLastName, i.instPosition
+        SELECT 
+            c.certID, c.dateSubmitted, c.timeSubmitted, 
+            c.serviceStartDate, c.serviceEndDate, c.serviceRemarks, 
+            c.instID, n.actTitle, n.actHours
         FROM certificates c
-        INNER JOIN instructors i ON c.instID = i.instID
+        LEFT JOIN nonteach n ON c.certID = n.certID
+        WHERE c.instID = ?
     `;
-    db.query(sql, (err, data) => {
+
+    db.query(sql, [userID], (err, data) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: "Error fetching certificates" });
         }
-        return res.json(data);
+
+        // Return an array of certificates, with or without nonteach details
+        return res.json(data || []);
     });
 });
+
+
 
 // Get all instructors
 app.get('/approvers', (req, res) => {
@@ -105,28 +118,80 @@ app.get('/approvers', (req, res) => {
     });
 });
 
-// Add a new certificate
+// Add a new certificate with optional nonteach details
 app.post('/certificates', (req, res) => {
-    const { dateSubmitted, timeSubmitted, serviceStartDate, serviceEndDate, serviceRemarks, instID } = req.body;
+    const { 
+        dateSubmitted, 
+        timeSubmitted, 
+        serviceStartDate, 
+        serviceEndDate, 
+        serviceRemarks, 
+        instID, 
+        actTitle, 
+        actHours 
+    } = req.body;
 
+    // Validate required fields
     if (!dateSubmitted || !timeSubmitted || !serviceStartDate || !serviceEndDate || !instID) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const sql = `
+    // Insert certificate details
+    const certificateSQL = `
         INSERT INTO certificates (dateSubmitted, timeSubmitted, serviceStartDate, serviceEndDate, serviceRemarks, instID)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
-    db.query(sql, [dateSubmitted, timeSubmitted, serviceStartDate, serviceEndDate, serviceRemarks || 'No remarks', instID], 
+    db.query(
+        certificateSQL,
+        [dateSubmitted, timeSubmitted, serviceStartDate, serviceEndDate, serviceRemarks || 'No remarks', instID],
         (err, result) => {
             if (err) {
                 console.error(err);
                 return res.status(500).json({ error: "Error adding certificate" });
             }
-            return res.status(201).json({ message: "Certificate added successfully" });
+
+            // If nonteach details are provided, insert them into the `nonteach` table
+            const certID = result.insertId; // Get the inserted certificate ID
+            if (actTitle && actHours) {
+                const nonteachSQL = `
+                    INSERT INTO nonteach (certID, actTitle, actHours)
+                    VALUES (?, ?, ?)
+                `;
+                db.query(nonteachSQL, [certID, actTitle, actHours], (err) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).json({ error: "Error adding nonteach details" });
+                    }
+
+                    // Respond with success message and the full data
+                    return res.status(201).json({
+                        message: "Certificate and nonteach details added successfully",
+                        certID,
+                        dateSubmitted,
+                        timeSubmitted,
+                        serviceStartDate,
+                        serviceEndDate,
+                        serviceRemarks,
+                        actTitle,
+                        actHours,
+                    });
+                });
+            } else {
+                // If no nonteach details, just return certificate success
+                return res.status(201).json({
+                    message: "Certificate added successfully without nonteach details",
+                    certID,
+                    dateSubmitted,
+                    timeSubmitted,
+                    serviceStartDate,
+                    serviceEndDate,
+                    serviceRemarks,
+                });
+            }
         }
     );
 });
+
 
 // Delete a certificate by ID
 app.delete('/certificates/:id', (req, res) => {
