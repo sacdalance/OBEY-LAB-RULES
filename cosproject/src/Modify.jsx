@@ -100,7 +100,7 @@ function Modify() {
                 <div className="grid gap-2">
                     <label className="text-sm font-medium">Except Date</label>
                     <textarea
-                        name="serviceExceptDate"
+                        name="serviceRemarks"
                         value={certificate.serviceRemarks || ''}
                         onChange={handleChange}
                         className="border p-2 rounded w-full"

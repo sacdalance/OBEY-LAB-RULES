@@ -33,14 +33,27 @@ function Dashboard() {
         if (user) {
             console.log("Fetching certificates for user:", user.instID);
             fetch(`http://localhost:8081/certificates?userID=${user.instID}`)
-                .then((res) => res.json())
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error('Failed to fetch certificates');
+                    }
+                    return res.json();
+                })
                 .then((data) => {
-                    console.log("Certificates fetched:", data);
-                    setCertificateState((prev) => ({ ...prev, certificates: data }));
+                    const formattedCertificates = data.map((cert) => ({
+                        ...cert,
+                        dateSubmittedFormatted: new Date(cert.dateSubmitted).toLocaleDateString(), // Format dateSubmitted
+                        serviceStartDateFormatted: new Date(cert.serviceStartDate).toLocaleDateString(),
+                        serviceEndDateFormatted: new Date(cert.serviceEndDate).toLocaleDateString(),
+                    }));
+    
+                    console.log("Formatted certificates:", formattedCertificates);
+                    setCertificateState((prev) => ({ ...prev, certificates: formattedCertificates }));
                 })
                 .catch((err) => console.error('Error fetching certificates:', err));
         }
     }, [user]);
+    
 
     // Handle form input changes
     const handleFormChange = (e) => {
@@ -51,58 +64,63 @@ function Dashboard() {
         }));
     };
 
-    // Handle adding a certificate
-    const handleAddCertificate = (e) => {
-        e.preventDefault();
-    
-        const now = new Date(); // Declare the current date and time
-    
-        // Format the date to MM-DD-YY
-        const todayDate = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}-${String(now.getFullYear()).slice(-2)}`;
-    
-        // Format the time to HH:MM:SS
-        const currentTime = now.toTimeString().split(' ')[0];
-    
-        const newCertificate = {
-            ...certificateState.certificate,
-            instID: user.instID,
-            dateSubmitted: todayDate,
-            timeSubmitted: currentTime,
-        };
-    
-        fetch('http://localhost:8081/certificates', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newCertificate),
-        })
-            .then((res) => {
-                if (res.ok) {
-                    alert('Certificate added successfully!');
-                    setCertificateState((prev) => ({
-                        ...prev,
-                        certificate: {
-                            serviceStartDate: '',
-                            serviceEndDate: '',
-                            serviceRemarks: '',
-                            actTitle: '',
-                            actHours: '',
-                        },  
-                    }));
-                    return res.json();
-                } else {
-                    throw new Error('Failed to add certificate');
-                }
-            })
-            .then((newCert) => {
+// Handle adding a certificate
+const handleAddCertificate = (e) => {
+    e.preventDefault();
+
+    const now = new Date(); // Declare the current date and time
+
+    const todayDate = now.toISOString().split('T')[0]; // Outputs as YYYY-MM-DD
+    const currentTime = now.toTimeString().split(' ')[0]; // Outputs as HH:MM:SS (24-hour format)
+
+    // Extract the month and year from today's date (dateSubmitted)
+    const today = new Date();
+    const submittedMonth = today.toLocaleString('default', { month: 'long' }); // Full month name
+    const submittedYear = today.getFullYear(); // Full year
+
+    const newCertificate = {
+        ...certificateState.certificate,
+        instID: user.instID,
+        dateSubmitted: todayDate,
+        timeSubmitted: currentTime,
+        month: submittedMonth, // Add month based on dateSubmitted
+        year: submittedYear,   // Add year based on dateSubmitted
+    };
+
+    fetch('http://localhost:8081/certificates', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCertificate),
+    })
+        .then((res) => {
+            if (res.ok) {
+                alert('Certificate added successfully!');
                 setCertificateState((prev) => ({
                     ...prev,
-                    certificates: [...prev.certificates, newCert],
+                    certificate: {
+                        serviceStartDate: '',
+                        serviceEndDate: '',
+                        serviceRemarks: '',
+                        actTitle: '',
+                        actHours: '',
+                    },
                 }));
-            })
-            .catch((err) => console.error(err));
-    };
+                return res.json();
+            } else {
+                throw new Error('Failed to add certificate');
+            }
+        })
+        .then((newCert) => {
+            setCertificateState((prev) => ({
+                ...prev,
+                certificates: [...prev.certificates, newCert],
+            }));
+        })
+        .catch((err) => console.error(err));
+};
+
     
 
     // Handle deleting a certificate
@@ -153,68 +171,264 @@ function Dashboard() {
         // Open a new window for printing
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Certificate</title>
-                    <style>
-                        /* Hide everything that is not part of the printable certificate */
-                        body * {
-                            visibility: hidden;
-                        }
-                        .certificate-container, .certificate-container * {
-                            visibility: visible;
-                        }
-                        .certificate-container {
-                            padding: 20px;
-                            border: 2px solid #333;
-                            width: 80%;
-                            margin: 0 auto;
-                            text-align: center;
-                        }
-                        .certificate-container h1 {
-                            font-size: 2em;
-                            margin-bottom: 20px;
-                        }
-                        .certificate-container p {
-                            font-size: 1.2em;
-                            margin: 10px 0;
-                        }
-                        .signature {
-                            margin-top: 40px;
-                            font-size: 1.2em;
-                            text-align: center;
-                        }
-                        .signature span {
-                            display: block;
-                            margin-top: 30px;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <!-- Printable certificate -->
-                    <div class="certificate-container">
-                        <h1>Certificate of Completion</h1>
-                        <p><strong>Issued By:</strong> ${user.instFirstName} ${user.instLastName}</p>
-                        <p><strong>Position:</strong> ${user.instPosition}</p>
-                        <p><strong>College:</strong> ${user.instCollege}</p>
-                        <p><strong>Campus:</strong> ${user.instCampus}</p>
-                        <p><strong>Email:</strong> ${user.instEmail}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 5px;
+            padding: 0;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: row;
+            overflow-x: hidden; 
+            font-size: 12px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .half-page {
+            width: 50%;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto; 
+            border-right: 1px dashed #ccc;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .header img {
+            width: 80px; 
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .header h1, .header h2 {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .formCode p {
+            margin: 0;
+        }
+
+        .section {
+            margin-bottom: 10px;
+        }
+
+        #title {
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            font-weight: bold; 
+            font-size: 14px;
+        }
+
+        #info p {
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            font-size: 10px;
+        }
+
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            font-size: 16px;
+        }
+
+        h2 {
+            font-weight: normal;
+        }
+
+        h3 {
+            font-size: 12px;
+        }
+
+        ul {
+            font-size: 12px;
+        }
+
+        .footer {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Half -->
+        <div class="half-page">
+            <div class="header">
+                <img src="src/assets/UP-Seal.png" alt="University Logo">
+                <div>
+                    <h1>UNIVERSITY OF THE PHILIPPINES BAGUIO</h1>
+                    <h2>Governor Pack Road, Baguio City</h2>
+                </div>
+            </div>
+            <div class="formCode">
+                <p>UP-HR Form No. 0055 (UP Form No. 65-A)</p>
+                <p>Revised 12 Oct 2016</p>
+                <p>COS No. ${cert.certID}</p>
+            </div>
+            <div class="section" id="title">
+                <p><strong>CERTIFICATE OF SERVICE</strong></p>
+            </div>
+            <div class="section" id="info">
+                <p>For the month of <u>December</u>, <u>2024</u></p>
+                <p>Name: <u>${user.instFirstName} ${user.instLastName}</u></p>
+                <p>Position: <u>${user.instPosition}</u></p>
+                <p>College/Unit: <u>${user.instCollege}</u></p>
+                <p>Campus: <u>${user.instCampus}</u></p>
+                <p>Email: <u>${user.instEmail}</u></p>
+            </div>
+            <div class="section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Activities other than Teaching such as Research etc.</th>
+                            <th>Approx. no. of hours per Week</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${cert.actTitle}</td>
+                            <td>${cert.actHours}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="section">
+                <p>I hereby certify, upon my honor, that I have rendered full service for the period of <u>${cert.serviceStartDateFormatted}</u> to <u>${cert.serviceEndDateFormatted}</u>.</p>
+                <p><strong>Date & Time Submitted:</strong> ${cert.dateSubmittedFormatted}</p>
+            </div>
+            <table>
+                <h3>Approval History:</h3>
+                <thead>
+                    <tr>
+                        <th><i>Name</i></th>
+                        <th><i>Action</i></th>
+                        <th><i>Date/Time</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Placeholder Name</td>
+                        <td>Placeholder Remark</td>
+                        <td>${cert.dateSubmittedFormatted}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="footer">
+                <p><i>This is an HRIS-generated report. Employee's and Approver's signatures not required.</i></p>
+                <p>References</p>
+                <ul>
+                    <li>Administrative Order No. PAEP 16-28, 25 May 2016 "Use of Official UP Mail and Online Release of Service Records, Travel Order, Employment Certification and other Certificates."</li>
+                    <li>Memorandum No. NGY 18-42, 07 Mar 2018 "Mandatory Use of UIS for Submission and Approval of Certificate of Service (CoS)"</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Right Half (identical content) -->
+        <div class="half-page">
+            <!-- Duplicate the content from the left half here -->
+                        <div class="header">
+                <img src="src/assets/UP-Seal.png" alt="University Logo">
+                <div>
+                    <h1>UNIVERSITY OF THE PHILIPPINES BAGUIO</h1>
+                    <h2>Governor Pack Road, Baguio City</h2>
+                </div>
+            </div>
+            <div class="formCode">
+                <p>UP-HR Form No. 0055 (UP Form No. 65-A)</p>
+                <p>Revised 12 Oct 2016</p>
+                <p>COS No. ${cert.certID}</p>
+            </div>
+            <div class="section" id="title">
+                <p><strong>CERTIFICATE OF SERVICE</strong></p>
+            </div>
+            <div class="section" id="info">
+                <p>For the month of <u>December</u>, <u>2024</u></p>
+                <p>Name: <u>${user.instFirstName} ${user.instLastName}</u></p>
+                <p>Position: <u>${user.instPosition}</u></p>
+                <p>College/Unit: <u>${user.instCollege}</u></p>
+                <p>Campus: <u>${user.instCampus}</u></p>
+                <p>Email: <u>${user.instEmail}</u></p>
+            </div>
+            <div class="section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Activities other than Teaching such as Research etc.</th>
+                            <th>Approx. no. of hours per Week</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${cert.actTitle}</td>
+                            <td>${cert.actHours}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="section">
+                <p>I hereby certify, upon my honor, that I have rendered full service for the period of <u>${cert.serviceStartDateFormatted}</u> to <u>${cert.serviceEndDateFormatted}</u>.</p>
+                <p><strong>Date & Time Submitted:</strong> ${cert.dateSubmittedFormatted}</p>
+            </div>
+            <table>
+                <h3>Approval History:</h3>
+                <thead>
+                    <tr>
+                        <th><i>Name</i></th>
+                        <th><i>Action</i></th>
+                        <th><i>Date/Time</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>    
+                        <td>Placeholder Name</td>
+                        <td>Placeholder Remark</td>
+                        <td>${cert.dateSubmittedFormatted}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="footer">
+                <p><i>This is an HRIS-generated report. Employee's and Approver's signatures not required.</i></p>
+                <p>References</p>
+                <ul>
+                    <li>Administrative Order No. PAEP 16-28, 25 May 2016 "Use of Official UP Mail and Online Release of Service Records, Travel Order, Employment Certification and other Certificates."</li>
+                    <li>Memorandum No. NGY 18-42, 07 Mar 2018 "Mandatory Use of UIS for Submission and Approval of Certificate of Service (CoS)"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
     
-                        <p><strong>Certificate ID:</strong> ${cert.certID}</p>
-                        <p><strong>Date Submitted:</strong> ${cert.dateSubmitted}</p>
-                        <p><strong>Service Start Date:</strong> ${cert.serviceStartDate}</p>
-                        <p><strong>Service End Date:</strong> ${cert.serviceEndDate}</p>
-                        <p><strong>Activity Title:</strong> ${cert.actTitle}</p>
-                        <p><strong>Activity Hours:</strong> ${cert.actHours}</p>
-                        <p><strong>Remarks:</strong> ${cert.serviceRemarks}</p>
-    
-                        <div class="signature">
-                            <span>Signature of Authorized Personnel</span>
-                            <span>Date: ${cert.dateSubmitted}</span>
-                        </div>
-                    </div>
-                </body>
-            </html>
+</body>
+</html>
+
         `);
         printWindow.document.close();
         printWindow.print();
@@ -328,10 +542,10 @@ function Dashboard() {
                         {certificateState.certificates.map((cert) => (
                             <tr key={cert.certID} className="hover:bg-gray-100">
                                 <td className="border border-gray-300 px-4 py-2">{cert.certID}</td>
-                                <td className="border border-gray-300 px-4 py-2">{cert.dateSubmitted}</td>
+                                <td className="border border-gray-300 px-4 py-2">{cert.dateSubmittedFormatted}</td>
                                 <td className="border border-gray-300 px-4 py-2">{cert.timeSubmitted}</td>
-                                <td className="border border-gray-300 px-4 py-2">{cert.serviceStartDate}</td>
-                                <td className="border border-gray-300 px-4 py-2">{cert.serviceEndDate}</td>
+                                <td className="border border-gray-300 px-4 py-2">{cert.serviceStartDateFormatted}</td>
+                                <td className="border border-gray-300 px-4 py-2">{cert.serviceEndDateFormatted}</td>
                                 <td className="border border-gray-300 px-4 py-2">{cert.serviceRemarks}</td>
                                 <td className="border border-gray-300 px-4 py-2">
                                     <button
