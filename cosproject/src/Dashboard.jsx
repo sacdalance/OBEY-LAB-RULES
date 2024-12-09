@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -128,33 +129,18 @@ function Dashboard() {
     };
 
     // Modify a certificate
-    const modify = (certID) => {
-        const updatedRemarks = prompt('Enter new remarks for the certificate:');
-        if (!updatedRemarks) return;
-
-        fetch(`http://localhost:8081/certificates/${certID}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ serviceRemarks: updatedRemarks }),
-        })
-            .then((res) => res.json())
-            .then((updatedCert) => {
-                alert('Certificate updated successfully!');
-                setCertificateState((prev) => ({
-                    certificates: prev.certificates.map((cert) =>
-                        cert.certID === certID
-                            ? { ...cert, serviceRemarks: updatedRemarks }
-                            : cert
-                    ),
-                }));
-            })
-            .catch((err) => {
-                console.error(err);
-                alert('Failed to update certificate.');
-            });
+    const handleNavigateToModify = (certID) => {
+        console.log('Navigating to modify with certID:', certID); // Debug
+        if (!certID) {
+            console.error('certID is undefined! Check the certificates data.');
+            return;
+        }
+        // Save certID to localStorage
+        localStorage.setItem('certID', certID);
+        navigate(`/modify/${certID}`);
     };
+
+
 
     // Print a certificate
     const print = (certID) => {
@@ -252,60 +238,76 @@ function Dashboard() {
             <div className="bg-white shadow-md rounded-lg p-6 mb-6">
                 <h2 className="text-xl font-bold mb-4">ADD CERTIFICATE</h2>
                 <form onSubmit={handleAddCertificate} className="grid gap-4">
-                    <p>Service Start Date</p>
-                    <input
-                        type="date"
-                        name="serviceStartDate"
-                        placeholder="Service Start Date"
-                        value={certificateState.certificate.serviceStartDate}
-                        onChange={handleFormChange}
-                        className="border p-2 rounded"
-                        required
-                    />
-                    <p>Service End Date</p>
-                    <input
-                        type="date"
-                        name="serviceEndDate"
-                        placeholder="Service End Date"
-                        value={certificateState.certificate.serviceEndDate}
-                        onChange={handleFormChange}
-                        className="border p-2 rounded"
-                        required
-                    />
-                    <p>Except Date</p>
-                    <textarea
-                        name="serviceExceptDate"
-                        placeholder="Remarks: e.g. January 5, 2024 to January 8, 2024"
-                        value={certificateState.certificate.serviceRemarks}
-                        onChange={handleFormChange}
-                        className="border p-2 rounded w-full"
-                    />
-                    <p>Non-teaching Activity</p>
-                    <input
-                        type="text"
-                        name="actTitle"
-                        placeholder="Activity Title"
-                        value={certificateState.certificate.actTitle}
-                        onChange={handleFormChange}
-                        className="border p-2 rounded w-full"
-                        required
-                    />
-                    <p>Non-teaching Activity Hours</p>
-                    <input
-                        type="number"
-                        min="0"
-                        name="actHours"
-                        placeholder="Activity Hours"
-                        value={certificateState.certificate.actHours}
-                        onChange={handleFormChange}
-                        className="border p-2 rounded w-full"
-                        required
-                    />
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Service Start Date</label>
+                        <input
+                            type="date"
+                            name="serviceStartDate"
+                            placeholder="Service Start Date"
+                            value={certificateState.certificate.serviceStartDate}
+                            onChange={handleFormChange}
+                            className="border p-2 rounded"
+                            required
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Service End Date</label>
+                        <input
+                            type="date"
+                            name="serviceEndDate"
+                            placeholder="Service End Date"
+                            value={certificateState.certificate.serviceEndDate}
+                            onChange={handleFormChange}
+                            className="border p-2 rounded"
+                            required
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Remarks (e.g., January 5, 2024 to January 8, 2024)</label>
+                        <textarea
+                            name="serviceRemarks"
+                            placeholder="Remarks"
+                            value={certificateState.certificate.serviceRemarks}
+                            onChange={handleFormChange}
+                            className="border p-2 rounded w-full"
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Non-teaching Activity</label>
+                        <input
+                            type="text"
+                            name="actTitle"
+                            placeholder="Activity Title"
+                            value={certificateState.certificate.actTitle}
+                            onChange={handleFormChange}
+                            className="border p-2 rounded w-full"
+                            required
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Non-teaching Activity Hours</label>
+                        <input
+                            type="number"
+                            min="0"
+                            name="actHours"
+                            placeholder="Activity Hours"
+                            value={certificateState.certificate.actHours}
+                            onChange={handleFormChange}
+                            className="border p-2 rounded w-full"
+                            required
+                        />
+                    </div>
+
                     <button className="bg-red-900 text-white px-4 py-2 rounded">
                         ADD CERTIFICATE
                     </button>
                 </form>
             </div>
+
 
             {/* Certificates Table */}
             <div className="bg-white shadow-md rounded-lg p-6">
@@ -333,14 +335,14 @@ function Dashboard() {
                                 <td className="border border-gray-300 px-4 py-2">{cert.serviceRemarks}</td>
                                 <td className="border border-gray-300 px-4 py-2">
                                     <button
-                                        onClick={() => modify(cert.certID)}
+                                        onClick={() => handleNavigateToModify(cert.certID)}
                                         className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 my-1"
                                     >
                                         MODIFY
                                     </button>
                                     <button
                                         onClick={() => print(cert.certID)}
-                                        className="bg-green-500 text-white px-2 py-1 rounded mr-2 my-1"
+                                        className="bg-gray-500 text-white px-2 py-1 rounded mr-2 my-1"
                                     >
                                         PRINT
                                     </button>

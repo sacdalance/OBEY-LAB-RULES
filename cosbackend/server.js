@@ -1,3 +1,4 @@
+
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
@@ -229,6 +230,115 @@ app.delete('/instructors/:id', (req, res) => {
 
         return res.send('Instructor deleted successfully');
     });
+});
+
+// Fetch a certificate by ID
+app.get('/certificates/:id', (req, res) => {
+    const certID = req.params.id;
+
+    const certificateSQL = `
+        SELECT c.certID, c.dateSubmitted, c.timeSubmitted, 
+               c.serviceStartDate, c.serviceEndDate, c.serviceRemarks, 
+               c.instID, n.actTitle, n.actHours 
+        FROM certificates c
+        LEFT JOIN nonteach n ON c.certID = n.certID
+        WHERE c.certID = ?
+    `;
+
+    db.query(certificateSQL, [certID], (err, results) => {
+        if (err) {
+            console.error("Error fetching certificate:", err);
+            return res.status(500).json({ error: "Error fetching certificate" });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: "Certificate not found" });
+        }
+
+        return res.json(results[0]); // Return the certificate details
+    });
+});
+
+// Update a certificate by ID
+app.put('/certificates/:id', (req, res) => {
+    const certID = req.params.id;
+    const {
+        dateSubmitted,
+        timeSubmitted,
+        serviceStartDate,
+        serviceEndDate,
+        serviceRemarks,
+        instID,
+        actTitle,
+        actHours,
+    } = req.body;
+
+    // Validate required fields
+    if (!dateSubmitted || !timeSubmitted || !serviceStartDate || !serviceEndDate || !instID) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Update certificate details
+    const certificateSQL = `
+        UPDATE certificates 
+        SET dateSubmitted = ?, 
+            timeSubmitted = ?, 
+            serviceStartDate = ?, 
+            serviceEndDate = ?, 
+            serviceRemarks = ?, 
+            instID = ?
+        WHERE certID = ?
+    `;
+
+    db.query(
+        certificateSQL,
+        [
+            dateSubmitted,
+            timeSubmitted,
+            serviceStartDate,
+            serviceEndDate,
+            serviceRemarks || 'No remarks', // Provide default value if no remarks
+            instID,
+            certID,
+        ],
+        (err, result) => {
+            if (err) {
+                console.error("Error updating certificates table:", err);
+                return res.status(500).json({ error: "Error updating certificate" });
+            }
+
+            // If no rows were updated, respond with an error
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: "Certificate not found" });
+            }
+
+            // Check and update nonteach details if provided
+            if (actTitle && actHours) {
+                const nonteachSQL = `
+                    UPDATE nonteach 
+                    SET actTitle = ?, 
+                        actHours = ?
+                    WHERE certID = ?
+                `;
+                db.query(nonteachSQL, [actTitle, actHours, certID], (err, nonteachResult) => {
+                    if (err) {
+                        console.error("Error updating nonteach table:", err);
+                        return res.status(500).json({ error: "Error updating nonteach details" });
+                    }
+
+                    // If no rows were updated, log the info (optional)
+                    if (nonteachResult.affectedRows === 0) {
+                        console.warn("Nonteach details not found for certID:", certID);
+                    }
+
+                    return res.json({ message: "Certificate and nonteach details updated successfully" });
+                });
+            } else {
+                // If no nonteach details, respond with success for certificate update
+                return res.json({ message: "Certificate updated successfully without nonteach details" });
+            }
+        }
+    );
 });
 
 // Start server
