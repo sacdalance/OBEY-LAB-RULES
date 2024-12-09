@@ -71,7 +71,7 @@ function Modify() {
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-bold mb-4">MODIFY CERTIFICATE</h2>
+            <h2 className="text-xl font-bold mb-4">MODIFY CERTIFICATE <br /> Certificate ID: {`${certID}`}</h2>
             <form onSubmit={handleSubmit} className="grid gap-4">
                 <div className="grid gap-2">
                     <label className="text-sm font-medium">Service Start Date</label>

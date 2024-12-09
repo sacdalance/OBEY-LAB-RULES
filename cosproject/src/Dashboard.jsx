@@ -479,10 +479,10 @@ const handleAddCertificate = (e) => {
                     </div>
 
                     <div className="grid gap-2">
-                        <label className="text-sm font-medium">Remarks (e.g., January 5, 2024 to January 8, 2024)</label>
+                        <label className="text-sm font-medium">Remarks</label>
                         <textarea
                             name="serviceRemarks"
-                            placeholder="Remarks"
+                            placeholder="(e.g., January 5, 2024 to January 8, 2024)"
                             value={certificateState.certificate.serviceRemarks}
                             onChange={handleFormChange}
                             className="border p-2 rounded w-full"
