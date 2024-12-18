@@ -52,7 +52,8 @@ ReactJS Spring
 ###
 4. To check files if already cloned.
 ###
-> ls -l
+> dir (Windows)
+> ls -l (MacOS, Linux)
 ###
 ###
 > git remote add origin https://github.com/sacdalance/OBEY-LAB-RULES
