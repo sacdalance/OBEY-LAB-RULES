@@ -52,7 +52,7 @@ ReactJS Spring
 ###
 4. To check files if already cloned.
 ###
-> dir (Windows)
+> dir (Windows) <br />
 > ls -l (MacOS, Linux)
 ###
 ###
