@@ -26,7 +26,7 @@ Tailwind CSS https://www.youtube.com/watch?v=1WdL1TLfkYo
 ###
 > npm install -D tailwindcss postcss autoprefixer
 ###
-<br /> <br />
+<br />
 
 ReactJS Spring
 ###
