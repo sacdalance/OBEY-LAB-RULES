@@ -33,7 +33,7 @@ ReactJS Spring
 > cd cosproject
 ###
 ###
-npm install react-spring
+> npm install react-spring
 ### 
 <br /> <br />
 
